@@ -42,4 +42,38 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    /**
+     * Get the user's tweets.
+     */
+    public function tweets()
+    {
+        return $this->hasMany(Tweet::class);
+    }
+
+    /**
+     * Get the list of users who follow this user.
+     */
+    public function followers()
+    {
+        return $this->belongsToMany(
+            User::class,
+            'follower_user',
+            'user_id',
+            'follower_id',
+        );
+    }
+
+    /**
+     * Get the list of users this user is following.
+     */
+    public function following()
+    {
+        return $this->belongsToMany(
+            User::class,
+            'follower_user',
+            'follower_id',
+            'user_id',
+        );
+    }
 }
