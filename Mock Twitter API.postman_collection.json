@@ -1,0 +1,526 @@
+{
+	"info": {
+		"_postman_id": "83c4bb21-c67a-4342-81f6-9346e02f6b8a",
+		"name": "Mock Twitter API",
+		"description": "A Twitter-like API that can allow users to tweet and follow other users.\n\nNotable features are:\n\n- Tweet CRUD\n- Upload file attachments to a tweet.\n- List suggested users to follow.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "24760131"
+	},
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Login User",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "X-XSRF-TOKEN",
+								"value": "{{xsrf-token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "email",
+									"value": "user@example.com",
+									"description": "(Required)",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "password",
+									"description": "(Required)",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:8000/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"login"
+							]
+						},
+						"description": "This request authenticates the user. Upon a successful attempt, the user is given an access token to be used for the entire session."
+					},
+					"response": []
+				},
+				{
+					"name": "Register User",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "X-XSRF-TOKEN",
+								"value": "{{xsrf-token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "User",
+									"description": "(Required)",
+									"type": "text"
+								},
+								{
+									"key": "email",
+									"value": "user@example.com",
+									"description": "(Required)",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "password",
+									"description": "(Required)",
+									"type": "text"
+								},
+								{
+									"key": "password_confirmation",
+									"value": "password",
+									"description": "(Required)",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:8000/register",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"register"
+							]
+						},
+						"description": "This request registers a new user to the application."
+					},
+					"response": []
+				},
+				{
+					"name": "Logout User",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "X-XSRF-TOKEN",
+								"value": "{{xsrf-token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8000/logout",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"logout"
+							]
+						},
+						"description": "This request invalidates the access token and creates a new session."
+					},
+					"response": []
+				}
+			],
+			"description": "Authentication requests for the API.\n\nThe API leverages the Sanctum authentication of the Laravel ecosystem to make dealing with authentication more easier. It uses cookie-based authentication techniques to ensure a secure browsing experience.\n\nDocumentation: [https://laravel.com/docs/10.x/sanctum]()"
+		},
+		{
+			"name": "Tweets",
+			"item": [
+				{
+					"name": "Create a Tweet",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "X-XSRF-TOKEN",
+								"value": "{{xsrf-token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "message",
+									"value": "Hello, tweets!",
+									"description": "(Required) The content of the tweet.",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:8000/tweets",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"tweets"
+							]
+						},
+						"description": "This request creates a tweet using the authenticated user's account."
+					},
+					"response": []
+				},
+				{
+					"name": "Create a Tweet with Attachments",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "X-XSRF-TOKEN",
+								"value": "{{xsrf-token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "message",
+									"value": "Tweet with attachments!",
+									"description": "(Required) The content of the tweet.",
+									"type": "text"
+								},
+								{
+									"key": "attachments[]",
+									"description": "(Optional) The attachments for the tweet.",
+									"type": "file",
+									"src": "photo1.jpg"
+								},
+								{
+									"key": "attachments[]",
+									"description": "(Optional) The attachments for the tweet.",
+									"type": "file",
+									"src": "photo2.jpg"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:8000/tweets",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"tweets"
+							]
+						},
+						"description": "This request creates a tweet with attachments. For the sake of example, two images are used as attachments for this request."
+					},
+					"response": []
+				},
+				{
+					"name": "Retrieve Tweets",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8000/tweets",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"tweets"
+							]
+						},
+						"description": "This request retrieves the tweets that are ordered by date (newest to oldest)."
+					},
+					"response": []
+				},
+				{
+					"name": "Update a Tweet",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "message",
+									"value": "Hello, world!",
+									"description": "(Required) The content of the tweet to be updated.",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:8000/tweets/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"tweets",
+								"1"
+							]
+						},
+						"description": "This request updates a specific tweet. Note that this will only work if the authenticated user is the owner of the tweet."
+					},
+					"response": []
+				},
+				{
+					"name": "Delete a Tweet",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "X-XSRF-TOKEN",
+								"value": "{{xsrf-token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8000/tweets/501",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"tweets",
+								"501"
+							]
+						},
+						"description": "This request deletes a specific tweet. Note that this will only work if the authenticated user is the owner of the tweet."
+					},
+					"response": []
+				}
+			],
+			"description": "This folder holds the requests for the tweet feature."
+		},
+		{
+			"name": "Followers",
+			"item": [
+				{
+					"name": "Follow a User",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "X-XSRF-TOKEN",
+								"value": "{{xsrf-token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8000/users/1/followers",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"users",
+								"1",
+								"followers"
+							]
+						},
+						"description": "This request adds the authenticated user to the follower list of the specificed user."
+					},
+					"response": []
+				},
+				{
+					"name": "Retrieve Followers",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8000/users/1/followers",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"users",
+								"1",
+								"followers"
+							]
+						},
+						"description": "This request retrieves the followers of the specified user."
+					},
+					"response": []
+				},
+				{
+					"name": "Suggested Followers",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "X-XSRF-TOKEN",
+								"value": "{{xsrf-token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8000/users/suggested",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"users",
+								"suggested"
+							]
+						},
+						"description": "This request retrieves a suggested list of users based from the authenticated user's follow list."
+					},
+					"response": []
+				},
+				{
+					"name": "Unfollow a User",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "X-XSRF-TOKEN",
+								"value": "{{xsrf-token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8000/users/1/followers",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"users",
+								"1",
+								"followers"
+							]
+						},
+						"description": "This request removes the authenticated user from the specified user's follow list."
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"pm.sendRequest({",
+					"    url: \"http://localhost:8000/sanctum/csrf-cookie\",",
+					"    method: \"GET\",",
+					"}, function (error, response, { cookies }) {",
+					"    if (!error) {",
+					"        pm.environment.set('xsrf-token', cookies.get('XSRF-TOKEN'))",
+					"    }",
+					"})"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "xsrf-token",
+			"value": "none"
+		}
+	]
+}
